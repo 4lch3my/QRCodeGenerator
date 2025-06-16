@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #qrcode {
+            margin: 20px auto;
+            border: 4px solid #4a5568;
+            border-radius: 8px;
+            background-color: #fff;
+            width: 256px;
+            height: 256px;
+        }
+        #qrcode img {
+            width: 100%;
+            height: 100%;
+        }
+        .dark #qrcode {
+            border-color: #718096;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex justify-center items-center min-h-screen p-4">
+    <div class="bg-gray-800 rounded-lg shadow-md p-8 w-full max-w-md">
+        <h1 class="text-2xl font-semibold mb-6 text-center text-gray-200">QR Code Generator</h1>
+
+        <div id="qrcode" class="mx-auto"></div>
+
+        <div class="mb-4">
+            <label for="data" class="block text-gray-300 text-sm font-bold mb-2">Enter data (text or URL):</label>
+            <input type="text" id="data" placeholder="Enter text or URL" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 text-white border-gray-600 focus:border-blue-500">
+        </div>
+
+        <button id="download-qr" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full mt-4">
+            Download QR Code
+        </button>
+
+        <p class="text-gray-400 text-sm mt-4">Type in the box above and the QR code will update automatically.</p>
+    </div>
+
+    <script>
+        const qrcode = new QRCode(document.getElementById("qrcode"));
+        const dataInput = document.getElementById("data");
+        const downloadButton = document.getElementById("download-qr");
+
+        function makeQRCode(data) {
+            qrcode.makeCode(data);
+        }
+
+        dataInput.addEventListener("input", function() {
+            makeQRCode(this.value);
+        });
+
+        downloadButton.addEventListener("click", function() {
+            const canvas = document.querySelector("#qrcode canvas");
+            if (canvas) {
+                const dataURL = canvas.toDataURL("image/png");
+                const a = document.createElement("a");
+                a.href = dataURL;
+                // Use a more unique filename
+                const uniquePart = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+                a.download = "qrcode_" + uniquePart + ".png";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert("Please generate a QR code first.");
+            }
+        });
+
+        makeQRCode(dataInput.value);
+    </script>
+</body>
+</html>
